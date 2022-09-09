@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import memesData from "../memesData";
+import React, { useState, useEffect } from 'react';
 
 const Meme = () => {
 
@@ -19,18 +18,26 @@ const Meme = () => {
         })
     } 
 
+
+
+    useEffect(()=>{
+        fetch("https://api.imgflip.com/get_memes")
+            .then(res=> res.json())
+            .then(data=>setAllMemes(data.data.memes))
+    }, [])
+
+
+
     function handleSubmit(event){
         event.preventDefault()
-        console.log(memeImage)
     }
 
-
-    const [allMemeImages] = useState(memesData)
     
-    function getMemeImage(){
-        let memesArray = allMemeImages.data.memes;
-        let randomNumber = Math.floor(Math.random() * memesArray.length);
-        const url = memesArray[randomNumber].url;
+    const [allMemes, setAllMemes] = useState([])
+    
+    function getMemes(){
+        let randomNumber = Math.floor(Math.random() * allMemes.length);
+        const url = allMemes[randomNumber].url;
         
         setMemeImage(prevMeme =>{
             return {
@@ -57,7 +64,7 @@ const Meme = () => {
                     placeholder="Bottom text" 
                     value={memeImage.bottomText}
                     className="form--input"/>
-                <button onClick={getMemeImage} className="form--button">Get a new meme image</button>
+                <button onClick={getMemes} className="form--button">Get a new meme image</button>
             </div>
             <div className="meme--container">
                 <img src={memeImage.randomImage} alt="random meme" className='meme--image'/>
